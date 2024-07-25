@@ -1,0 +1,11 @@
+{
+  "devDependencies": {
+    "serverless-offline": "^13.6.0"
+  },
+  "dependencies": {
+    "@middy/core": "^5.4.5",
+    "@middy/http-json-body-parser": "^5.4.5",
+    "joi": "^17.13.3",
+    "mysql2": "^3.10.3"
+  }
+}

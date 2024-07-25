@@ -1,0 +1,226 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: API de programación de campañas
+  description: API que permite que poder crear campañas y ver la cantidad de mensajes programados.
+  termsOfService: http://swagger.io/terms/
+servers:
+  - url: http://localhost:3000/api
+paths:
+  /createCampaign:
+    post:
+      tags:
+        - Campaña
+      summary: Crea un campaña
+      description: Permite crear una nueva campaña.
+      requestBody:
+        description: Crear una campaña
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCampaign'
+      responses:
+        '200':
+          description: Respuesta después de crear la campaña.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessCampaignResponse'
+        '500':
+          description: Error inesperado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorCampaignResponse'
+  /getMessages:
+    get:
+      tags:
+        - Mensajes
+      summary: Lista los mensajes
+      description: Permite listar los mensajes, filtrando por mes y también por cliente.
+      parameters:
+        - name: mes
+          in: query
+          description: Especifica el mes(número del mes)
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 12
+            example: 12
+        - name: idCliente
+          in: query
+          description: Especifica el cliente(id del cliente)
+          required: false
+          schema:
+            type: number
+            example: 494554112
+      responses:
+        '200':
+          description: Lista los mensajes activos clasificados por su estado de envío.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessMessagesResponse'
+        '500':
+          description: Error inesperado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessagesResponse'
+components:
+  schemas:
+    CreateCampaign:
+      type: object
+      required:
+        - idUsuario
+        - nombreCampania
+        - fechaHoraProgramacion
+        - estado
+        - mensajes
+      properties:
+        idUsuario:
+          type: integer
+          example: 494665223
+        nombreCampania:
+          type: string
+          example: Campania Viernes
+        fechaHoraProgramacion:
+          type: string
+          format: date-time
+          example: '2024-11-10 08:00:00'
+        estado:
+          type: integer
+          example: 1
+        mensajes:
+          type: array
+          items:
+            type: object
+            required:
+              - fechaHoraEnvio
+              - mensaje
+              - estado
+            properties:
+              fechaHoraEnvio:
+                type: string
+                format: date-time
+                example: '2024-12-15 14:00:00'
+              mensaje:
+                type: string
+                example: Último mensaje del día. Buenas noches a todos.
+              estado:
+                type: integer
+                example: 1
+    ActveMessages:
+      type: object
+      required:
+        - pendientes
+        - enviados
+        - fallidos
+      properties:
+        pendientes:
+          type: array
+          items:
+            type: object
+            required:
+              - estadoEnvio
+              - fechaHoraEnvio
+              - mensaje
+            properties:
+              estadoEnvio:
+                type: integer
+                example: 1
+              fechaHoraEnvio:
+                type: string
+                format: date-time
+              mensaje:
+                type: string
+                example: Último mensaje del día. Buenas noches a todos.
+        enviados:
+          type: array
+          items:
+            type: object
+            required:
+              - estadoEnvio
+              - fechaHoraEnvio
+              - mensaje
+            properties:
+              estadoEnvio:
+                type: integer
+                example: 2
+              fechaHoraEnvio:
+                type: string
+                format: date-time
+              mensaje:
+                type: string
+                example: Mejore ofertas de Mayo.
+        fallidos:
+          type: array
+          items:
+            type: object
+            required:
+              - estadoEnvio
+              - fechaHoraEnvio
+              - mensaje
+            properties:
+              estadoEnvio:
+                type: integer
+                example: 3
+              fechaHoraEnvio:
+                type: string
+                format: date-time
+              mensaje:
+                type: string
+                example: Felices Fiestas a todos!!!
+    SuccessCampaignResponse:
+      type: object
+      required:
+        - message
+        - code
+      properties:
+        code:
+          type: integer
+          example: 1
+        message:
+          type: string
+          example: La campaña "Campania Vierne" fue creada de manera exitosa.
+    ErrorCampaignResponse:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          example: 0
+        message:
+          type: string
+          example: Hubo un problema al crear la campaña.
+    SuccessMessagesResponse:
+      type: object
+      required:
+        - code
+        - message
+        - data
+      properties:
+        code:
+          type: integer
+          example: 1
+        message:
+          type: string
+          example: Mensajes encontrados
+        data:
+          $ref: '#/components/schemas/ActveMessages'
+    ErrorMessagesResponse:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          example: 0
+        message:
+          type: string
+          example: Hubo un problema al buscar los mensajes.

@@ -1,0 +1,35 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: iwttn
+# "app" enables Serverless Framework Dashboard features and sharing them with other Services.
+app: technical-test
+# "service" is the name of this project. This will also be added to your AWS resource names.
+service: technical-test
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+
+functions:
+  hello:
+    handler: handler.hello
+    events:
+      - httpApi:
+          path: /api
+          method: get
+
+  createCampaign:
+    handler: src/api/createCampaign.createCampaign
+    events:
+      - httpApi:
+          path: /api/createCampaign
+          method: post
+
+  getMessages:
+    handler: src/api/getMessages.getMessages
+    events:
+      - httpApi:
+          path: /api/getMessages
+          method: get
+          
+plugins:
+  - serverless-offline
